@@ -17,9 +17,9 @@ namespace FileSystemApp.Controllers
             {
                 FileSystemItem folder = new FileSystemItem { 
                     Name = driver.Name,
-                    Path = driver.Name,
-                    ParentName = "My Computer",
-                    ParentPath = "",
+                    Path = driver.RootDirectory.FullName,
+                    ParentName = "MyComputer",
+                    ParentPath = "MyComputer",
                     FileSystemItemType = FileSystemItemType.Folder
                 };
                 items.Add(folder);

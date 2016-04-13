@@ -28,8 +28,11 @@
         }
 
         function WriteResponse(fileSystemItems) {
+            if (fileSystemItems == "MyComputer") {
+                window.location = "/Home/Index";
+            }
             var result = "<span><b>Current path: </b>" + fileSystemItems[0].ParentName + "</span><br/><br/>";
-            result += "<a data-item='" + fileSystemItems[0].ParentPath + "~' onclick='GetContent(this);' href='#'>..</a><br/>";
+            result += "<a data-item='" + fileSystemItems[0].ParentPath + "' onclick='GetContent(this);' href='#'>..</a><br/>";
             $.each(fileSystemItems, function (index, fsi) {
                 if (fsi.FileSystemItemType == 1) {
                     result += "<a data-item='" + fsi.Path + "' onclick='GetContent(this);' href='#'>" +

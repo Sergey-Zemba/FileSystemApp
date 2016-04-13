@@ -21,13 +21,13 @@ namespace FileSystemApp.Controllers
         public IHttpActionResult Get(string id)
         {
             string path = id.Replace("=", "\\");
-            if (id.EndsWith("~"))
-            {
-                path = path.Substring(0, id.Length - 1);
-            }
             if (path.Length == 2)
             {
-                
+                path += @"\";
+            }
+            if (id == "MyComputer")
+            {
+                return Json("MyComputer");
             }
             DirectoryInfo directory = new DirectoryInfo(path);
             string fullName = directory.FullName;
@@ -40,7 +40,7 @@ namespace FileSystemApp.Controllers
                     Name = dir.Name,
                     Path = dir.FullName,
                     ParentName = fullName,
-                    ParentPath = id.EndsWith("~") ? directory.Parent.FullName.Substring(0, directory.FullName.LastIndexOf("\\")) : fullName.Substring(0, fullName.LastIndexOf("\\")),
+                    ParentPath = path.Length == 3 ? "MyComputer" : fullName.Substring(0, fullName.LastIndexOf("\\")),
                     FileSystemItemType = FileSystemItemType.Folder
                 };
                 items.Add(item);
@@ -53,7 +53,7 @@ namespace FileSystemApp.Controllers
                     Name = file.Name,
                     Path = file.FullName,
                     ParentName = fullName,
-                    ParentPath = id.EndsWith("~") ? directory.Parent.FullName.Substring(0, directory.FullName.LastIndexOf("\\")) : fullName.Substring(0, fullName.LastIndexOf("\\")),
+                    ParentPath = path.Length == 3 ? "MyComputer" : fullName.Substring(0, fullName.LastIndexOf("\\")),
                     FileSystemItemType = FileSystemItemType.File
                 };
                 items.Add(item);
