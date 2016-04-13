@@ -1,8 +1,11 @@
-﻿@model IEnumerable<FileSystemApp.Models.FileSystemItem>
+﻿@using System.Linq
+@using System.Web
+@model System.Collections.Generic.IEnumerable<FileSystemApp.Models.FileSystemItem>
 <div id="content">
-    @foreach (var driver in Model.Take(2))
+    <b>Current path: </b>My Computer<br/><br/>
+    @foreach (var driver in Model.Take((int) ViewBag.Count))
     {
-        <a id="@driver.Id" data-item="@driver.Id" onclick="GetContent(this);" href="#">@driver.Path</a><br/>
+        <a data-item="@driver.Path" onclick="GetContent(this);" href="#">@driver.Name</a><br/>
     }
 </div>
 @section scripts
@@ -10,6 +13,7 @@
     <script type="text/javascript">
         function GetContent(el) {
             var path = $(el).attr('data-item');
+            path = path.replace(/\\/g, "=");
             $.ajax({
                 url: "/api/values/" + path,
                 type: "GET",
@@ -24,18 +28,16 @@
         }
 
         function WriteResponse(fileSystemItems) {
-            var result = "";
+            var result = "<span><b>Current path: </b>" + fileSystemItems[0].ParentName + "</span><br/><br/>";
+            result += "<a data-item='" + fileSystemItems[0].ParentPath + "~' onclick='GetContent(this);' href='#'>..</a><br/>";
             $.each(fileSystemItems, function (index, fsi) {
                 if (fsi.FileSystemItemType == 1) {
-                    result += "<a id='" + fsi.Id + "' data-item='" + fsi.Id + "' onclick='GetContent(this);' href='#'>" +
+                    result += "<a data-item='" + fsi.Path + "' onclick='GetContent(this);' href='#'>" +
                         fsi.Name + "</a><br/>";
                 } else {
                     result += "<span>" + fsi.Name + "</span><br/>";
                 }
             });
-            //$.each(directory.GetFiles(), function(file) {
-            //    result += "<span>" + file.Name + "</span><br/>";
-            //});
             $("#content").html(result);
         }
 

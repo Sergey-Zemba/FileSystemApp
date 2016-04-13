@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FileSystemApp.Models
+﻿namespace FileSystemApp.Models
 {
     public enum FileSystemItemType
     {
