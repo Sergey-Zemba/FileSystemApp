@@ -152,8 +152,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\FileManager.cs" />
     <Compile Include="Models\FileSystemItem.cs" />
     <Compile Include="Models\FileSystemItemType.cs" />
+    <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\NumberOfFiles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

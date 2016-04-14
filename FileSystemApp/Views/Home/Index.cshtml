@@ -1,19 +1,41 @@
 ﻿@using System.Linq
 @using System.Web
-@model System.Collections.Generic.IEnumerable<FileSystemApp.Models.FileSystemItem>
+@using FileSystemApp.Models
+@model System.Collections.Generic.IEnumerable<FileSystemApp.Models.Folder>
 <div id="content">
-    <b>Current path: </b>My Computer<br/><br/>
-    @foreach (var driver in Model.Take((int) ViewBag.Count))
-    {
-        <a data-item="@driver.Path" onclick="GetContent(this);" href="#">@driver.Name</a><br/>
-    }
+    <div id="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Less 10MB</th>
+                    <th>10Mb-100MB</th>
+                    <th>More 100MB</th>
+                </tr>
+            </thead>
+            <tbody id="sizes">
+                <tr>
+                    <td>@ViewBag.NumberOfFiles.SmallSize</td>
+                    <td>@ViewBag.NumberOfFiles.MiddleSize</td>
+                    <td>@ViewBag.NumberOfFiles.LargeSize</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br /><br />
+    <div id="fileSystem">
+        <b>Current path: </b>My Computer<br /><br />
+        @foreach (var driver in Model.Take((int)ViewBag.Count))
+        {
+            <a data-item="@driver.FullName" onclick="GetContent(this);" href="#">@driver.FullName</a><br />
+        }
+    </div>
 </div>
 @section scripts
 {
     <script type="text/javascript">
         function GetContent(el) {
             var path = $(el).attr('data-item');
-            path = path.replace(/\\/g, "=");
+            path = path.replace(/\\/g, "*").replace(/\./g, "&").replace(/\+/g, "|");
             $.ajax({
                 url: "/api/values/" + path,
                 type: "GET",
@@ -21,19 +43,22 @@
                 success: function (data) {
                     WriteResponse(data);
                 },
-                error: function() {
+                error: function () {
                     alert("Error");
                 }
             });
         }
 
-        function WriteResponse(fileSystemItems) {
-            if (fileSystemItems == "MyComputer") {
+        function WriteResponse(folder) {
+            if (folder == "MyComputer") {
                 window.location = "/Home/Index";
             }
-            var result = "<span><b>Current path: </b>" + fileSystemItems[0].ParentName + "</span><br/><br/>";
-            result += "<a data-item='" + fileSystemItems[0].ParentPath + "' onclick='GetContent(this);' href='#'>..</a><br/>";
-            $.each(fileSystemItems, function (index, fsi) {
+            var table = "<tr><td>" + folder.NumberOfFiles.SmallSize + "</td>" +
+                "<td>" + folder.NumberOfFiles.MiddleSize + "</td>" +
+                "<td>" + folder.NumberOfFiles.LargeSize + "</td></tr>";
+            var result = "<span><b>Current path: </b>" + folder.FullName + "</span><br/><br/>";
+            result += "<a data-item='" + folder.Path + "' onclick='GetContent(this);' href='#'>..</a><br/>";
+            $.each(folder.FileSystemItems, function (index, fsi) {
                 if (fsi.FileSystemItemType == 1) {
                     result += "<a data-item='" + fsi.Path + "' onclick='GetContent(this);' href='#'>" +
                         fsi.Name + "</a><br/>";
@@ -41,7 +66,8 @@
                     result += "<span>" + fsi.Name + "</span><br/>";
                 }
             });
-            $("#content").html(result);
+            $("#fileSystem").html(result);
+            $("#sizes").html(table);
         }
 
 

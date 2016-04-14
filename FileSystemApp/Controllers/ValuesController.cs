@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -20,7 +21,7 @@ namespace FileSystemApp.Controllers
         // GET api/values/5
         public IHttpActionResult Get(string id)
         {
-            string path = id.Replace("=", "\\");
+            string path = id.Replace("*", "\\").Replace("&", ".").Replace("|", "+");
             if (path.Length == 2)
             {
                 path += @"\";
@@ -30,7 +31,6 @@ namespace FileSystemApp.Controllers
                 return Json("MyComputer");
             }
             DirectoryInfo directory = new DirectoryInfo(path);
-            string fullName = directory.FullName;
             List<FileSystemItem> items = new List<FileSystemItem>();
             IEnumerable<DirectoryInfo> directories = directory.GetDirectories().ToList();
             foreach (var dir in directories)
@@ -39,8 +39,6 @@ namespace FileSystemApp.Controllers
                 {
                     Name = dir.Name,
                     Path = dir.FullName,
-                    ParentName = fullName,
-                    ParentPath = path.Length == 3 ? "MyComputer" : fullName.Substring(0, fullName.LastIndexOf("\\")),
                     FileSystemItemType = FileSystemItemType.Folder
                 };
                 items.Add(item);
@@ -52,13 +50,18 @@ namespace FileSystemApp.Controllers
                 {
                     Name = file.Name,
                     Path = file.FullName,
-                    ParentName = fullName,
-                    ParentPath = path.Length == 3 ? "MyComputer" : fullName.Substring(0, fullName.LastIndexOf("\\")),
                     FileSystemItemType = FileSystemItemType.File
                 };
                 items.Add(item);
             }
-            return Json(items);
+            var folder = new Folder
+            {
+                FullName = directory.FullName,
+                Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0, directory.FullName.LastIndexOf("\\")),
+                FileSystemItems = items,
+                NumberOfFiles = FileManager.GetFilesNumber(directory, new NumberOfFiles())
+            };
+            return Json(folder);
         }
 
         // POST api/values

@@ -12,18 +12,21 @@ namespace FileSystemApp.Controllers
         {
             IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().ToList().Where(d => d.IsReady);
             ViewBag.Count = drives.Count();
-            List<FileSystemItem> items = new List<FileSystemItem>();
+            NumberOfFiles numberOfFiles  = new NumberOfFiles();
+            List<Folder> items = new List<Folder>();
             foreach (var driver in drives)
             {
-                FileSystemItem folder = new FileSystemItem { 
-                    Name = driver.Name,
-                    Path = driver.RootDirectory.FullName,
-                    ParentName = "MyComputer",
-                    ParentPath = "MyComputer",
-                    FileSystemItemType = FileSystemItemType.Folder
+                Folder folder = new Folder {
+                    FullName = driver.RootDirectory.FullName,
+                    Path = "MyComputer"
                 };
                 items.Add(folder);
+                var number = FileManager.GetFilesNumber(driver.RootDirectory, new NumberOfFiles());
+                numberOfFiles.SmallSize += number.SmallSize;
+                numberOfFiles.MiddleSize += number.MiddleSize;
+                numberOfFiles.LargeSize += number.LargeSize;
             }
+            ViewBag.NumberOfFiles = numberOfFiles;
             return View(items);
         }
     }
