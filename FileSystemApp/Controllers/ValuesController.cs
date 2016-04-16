@@ -21,7 +21,7 @@ namespace FileSystemApp.Controllers
         // GET api/values/5
         public IHttpActionResult Get(string id)
         {
-            string path = id.Replace("*", "\\").Replace("&", ".").Replace("|", "+");
+            string path = id.Replace("*", "\\").Replace("&", ".").Replace("''","'");;
             if (path.Length == 2)
             {
                 path += @"\";

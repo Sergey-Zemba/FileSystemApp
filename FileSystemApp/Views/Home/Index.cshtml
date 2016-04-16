@@ -35,7 +35,8 @@
     <script type="text/javascript">
         function GetContent(el) {
             var path = $(el).attr('data-item');
-            path = path.replace(/\\/g, "*").replace(/\./g, "&").replace(/\+/g, "|");
+            path = path.replace(/\\/g, "*").replace(/\./g, "&");
+
             $.ajax({
                 url: "/api/values/" + path,
                 type: "GET",
