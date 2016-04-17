@@ -12,6 +12,7 @@ namespace FileSystemApp.Controllers
 {
     public class ValuesController : ApiController
     {
+        FileSystemContext db = new FileSystemContext();
         // GET api/values
         public IEnumerable<string> Get()
         {
@@ -21,47 +22,47 @@ namespace FileSystemApp.Controllers
         // GET api/values/5
         public IHttpActionResult Get(string id)
         {
-            string path = id.Replace("*", "\\").Replace("&", ".").Replace("''","'");;
-            if (path.Length == 2)
+            string path = id.Replace("*", @"\").Replace("&", ".");
+            if (db.Folders.Find(path) != null)
             {
-                path += @"\";
+                return Json(db.Folders.Find(path));
             }
-            if (id == "MyComputer")
+            else
             {
-                return Json("MyComputer");
+                Folder folder = FileManager.BuildTree(db, path);
+                //DirectoryInfo directory = new DirectoryInfo(path);
+                //List<FileSystemItem> items = new List<FileSystemItem>();
+                //IEnumerable<DirectoryInfo> directories = directory.GetDirectories().ToList();
+                //foreach (var dir in directories)
+                //{
+                //    FileSystemItem item = new FileSystemItem
+                //    {
+                //        Name = dir.Name,
+                //        Path = dir.FullName,
+                //        FileSystemItemType = FileSystemItemType.Folder
+                //    };
+                //    items.Add(item);
+                //}
+                //IEnumerable<FileInfo> files = directory.GetFiles().ToList();
+                //foreach (var file in files)
+                //{
+                //    FileSystemItem item = new FileSystemItem
+                //    {
+                //        Name = file.Name,
+                //        Path = file.FullName,
+                //        FileSystemItemType = FileSystemItemType.File
+                //    };
+                //    items.Add(item);
+                //}
+                //var folder = new Folder
+                //{
+                //    FullName = directory.FullName,
+                //    Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0, directory.FullName.LastIndexOf("\\")),
+                //    FileSystemItems = items,
+                //    NumberOfFiles = FileManager.GetFilesNumber(directory, new NumberOfFiles())
+                //};
+                return Json(folder);
             }
-            DirectoryInfo directory = new DirectoryInfo(path);
-            List<FileSystemItem> items = new List<FileSystemItem>();
-            IEnumerable<DirectoryInfo> directories = directory.GetDirectories().ToList();
-            foreach (var dir in directories)
-            {
-                FileSystemItem item = new FileSystemItem
-                {
-                    Name = dir.Name,
-                    Path = dir.FullName,
-                    FileSystemItemType = FileSystemItemType.Folder
-                };
-                items.Add(item);
-            }
-            IEnumerable<FileInfo> files = directory.GetFiles().ToList();
-            foreach (var file in files)
-            {
-                FileSystemItem item = new FileSystemItem
-                {
-                    Name = file.Name,
-                    Path = file.FullName,
-                    FileSystemItemType = FileSystemItemType.File
-                };
-                items.Add(item);
-            }
-            var folder = new Folder
-            {
-                FullName = directory.FullName,
-                Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0, directory.FullName.LastIndexOf("\\")),
-                FileSystemItems = items,
-                NumberOfFiles = FileManager.GetFilesNumber(directory, new NumberOfFiles())
-            };
-            return Json(folder);
         }
 
         // POST api/values

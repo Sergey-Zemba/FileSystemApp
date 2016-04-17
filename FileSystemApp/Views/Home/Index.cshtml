@@ -1,7 +1,7 @@
 ﻿@using System.Linq
 @using System.Web
 @using FileSystemApp.Models
-@model System.Collections.Generic.IEnumerable<FileSystemApp.Models.Folder>
+@model Folder
 <div id="content">
     <div id="table">
         <table>
@@ -14,9 +14,9 @@
             </thead>
             <tbody id="sizes">
                 <tr>
-                    <td>@ViewBag.NumberOfFiles.SmallSize</td>
-                    <td>@ViewBag.NumberOfFiles.MiddleSize</td>
-                    <td>@ViewBag.NumberOfFiles.LargeSize</td>
+                    <td>@Model.NumberOfFiles.SmallSize</td>
+                    <td>@Model.NumberOfFiles.MiddleSize</td>
+                    <td>@Model.NumberOfFiles.LargeSize</td>
                 </tr>
             </tbody>
         </table>
@@ -24,9 +24,9 @@
     <br /><br />
     <div id="fileSystem">
         <b>Current path: </b>My Computer<br /><br />
-        @foreach (var driver in Model.Take((int)ViewBag.Count))
+        @foreach (var driver in Model.FileSystemItems)
         {
-            <a data-item="@driver.FullName" onclick="GetContent(this);" href="#">@driver.FullName</a><br />
+            <a data-item="@driver.Name" onclick="GetContent(this);" href="#">@driver.Name</a><br />
         }
     </div>
 </div>
