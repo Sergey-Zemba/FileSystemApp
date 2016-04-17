@@ -11,7 +11,7 @@ namespace FileSystemApp.Controllers
         FileSystemContext db = new FileSystemContext();
         public ActionResult Index()
         {
-            Folder myComputer = FileManager.BuildTree(db, "MyComputer");
+            Folder myComputer = FileManager.BuildTree(db, "Root");
             return View(myComputer);
         }
     }

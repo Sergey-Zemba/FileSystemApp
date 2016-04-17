@@ -23,13 +23,14 @@ namespace FileSystemApp.Controllers
         public IHttpActionResult Get(string id)
         {
             string path = id.Replace("*", @"\").Replace("&", ".");
+            Folder folder;
             if (db.Folders.Find(path) != null)
             {
-                return Json(db.Folders.Find(path));
+                folder = db.Folders.Find(path);
             }
             else
             {
-                Folder folder = FileManager.BuildTree(db, path);
+                folder = FileManager.BuildTree(db, path);
                 //DirectoryInfo directory = new DirectoryInfo(path);
                 //List<FileSystemItem> items = new List<FileSystemItem>();
                 //IEnumerable<DirectoryInfo> directories = directory.GetDirectories().ToList();
@@ -61,8 +62,8 @@ namespace FileSystemApp.Controllers
                 //    FileSystemItems = items,
                 //    NumberOfFiles = FileManager.GetFilesNumber(directory, new NumberOfFiles())
                 //};
-                return Json(folder);
             }
+            return Json(folder);
         }
 
         // POST api/values

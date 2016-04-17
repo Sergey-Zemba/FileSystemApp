@@ -11,7 +11,7 @@ namespace FileSystemApp.Models
         public string FullName { get; set; }
         [Key]
         public string Path { get; set; }
-        public List<FileSystemItem> FileSystemItems { get; set; }
+        public virtual List<FileSystemItem> FileSystemItems { get; set; }
         public NumberOfFiles NumberOfFiles { get; set; }
     }
 }

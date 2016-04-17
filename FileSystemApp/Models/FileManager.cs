@@ -12,7 +12,7 @@ namespace FileSystemApp.Models
         {
             List<FileSystemItem> items = new List<FileSystemItem>();
             Folder folder;
-            if (path == "MyComputer")
+            if (path == "Root")
             {
                 IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().ToList().Where(d => d.IsReady);
                 NumberOfFiles numberOfFiles = new NumberOfFiles();
@@ -35,7 +35,7 @@ namespace FileSystemApp.Models
                     FileSystemItems = items,
                     FullName = "MyComputer",
                     NumberOfFiles = numberOfFiles,
-                    Path = "MyComputer"
+                    Path = "Root"
                 };
                 db.Folders.Add(folder);
                 db.SaveChanges();
@@ -75,7 +75,7 @@ namespace FileSystemApp.Models
                 FileSystemItems = items,
                 FullName = directory.FullName,
                 NumberOfFiles = GetFilesNumber(directory, new NumberOfFiles()),
-                Path = directory.FullName
+                Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0,directory.FullName.LastIndexOf(@"\"))
             };
             db.Folders.Add(folder);
             db.SaveChanges();
