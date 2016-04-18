@@ -1,7 +1,7 @@
 ﻿@using System.Linq
 @using System.Web
 @using FileSystemApp.Models
-@model Folder
+@model FileSystemApp.Models.ViewModels.FolderViewModel
 <div id="content">
     <div id="table">
         <table>
@@ -23,54 +23,14 @@
     </div>
     <br /><br />
     <div id="fileSystem">
-        <b>Current path: </b>My Computer<br /><br />
+        <b>Current path: </b>@Model.FullName<br /><br />
         @foreach (var driver in Model.FileSystemItems)
         {
-            <a data-item="@driver.Name" onclick="GetContent(this);" href="#">@driver.Name</a><br />
+            <a data-item="@driver.Id" onclick="GetContent(this);" href="#">@driver.Name</a><br />
         }
     </div>
 </div>
 @section scripts
 {
-    <script type="text/javascript">
-        function GetContent(el) {
-            var path = $(el).attr('data-item');
-            path = path.replace(/\\/g, "*").replace(/\./g, "&");
-
-            $.ajax({
-                url: "/api/values/" + path,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    WriteResponse(data);
-                },
-                error: function () {
-                    alert("Error");
-                }
-            });
-        }
-
-        function WriteResponse(folder) {
-            if (folder == "MyComputer") {
-                window.location = "/Home/Index";
-            }
-            var table = "<tr><td>" + folder.NumberOfFiles.SmallSize + "</td>" +
-                "<td>" + folder.NumberOfFiles.MiddleSize + "</td>" +
-                "<td>" + folder.NumberOfFiles.LargeSize + "</td></tr>";
-            var result = "<span><b>Current path: </b>" + folder.FullName + "</span><br/><br/>";
-            result += "<a data-item='" + folder.Path + "' onclick='GetContent(this);' href='#'>..</a><br/>";
-            $.each(folder.FileSystemItems, function (index, fsi) {
-                if (fsi.FileSystemItemType == 1) {
-                    result += "<a data-item='" + fsi.Path + "' onclick='GetContent(this);' href='#'>" +
-                        fsi.Name + "</a><br/>";
-                } else {
-                    result += "<span>" + fsi.Name + "</span><br/>";
-                }
-            });
-            $("#fileSystem").html(result);
-            $("#sizes").html(table);
-        }
-
-
-    </script>
+    <script type="text/javascript" src="~/Scripts/api.js"></script>
 }

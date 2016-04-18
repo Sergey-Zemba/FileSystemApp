@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace FileSystemApp.Models
+namespace FileSystemApp.Models.ViewModels
 {
-    public class Folder
+    public class FolderViewModel
     {
-        [Key]
-        public Guid Id { get; set; }
         public Guid ParentId { get; set; }
         public string FullName { get; set; }
-        public virtual List<FileSystemItem> FileSystemItems { get; set; }
         public NumberOfFiles NumberOfFiles { get; set; }
+        public List<FileSystemItemViewModel> FileSystemItems { get; set; }
     }
 }

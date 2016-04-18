@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using FileSystemApp.Models;
+using FileSystemApp.Models.ViewModels;
 
 namespace FileSystemApp.Controllers
 {
@@ -11,8 +13,11 @@ namespace FileSystemApp.Controllers
         FileSystemContext db = new FileSystemContext();
         public ActionResult Index()
         {
-            Folder myComputer = FileManager.BuildTree(db, "Root");
-            return View(myComputer);
+            db.Folders.RemoveRange(db.Folders);
+            db.FileSystemItems.RemoveRange(db.FileSystemItems);
+            Folder myComputer = FileManager.BuildTree(db, Guid.Empty);
+            FolderViewModel folderViewModel = FileManager.CreateFolderViewModel(myComputer);
+            return View(folderViewModel);
         }
     }
 }

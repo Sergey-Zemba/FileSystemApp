@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using FileSystemApp.Models.ViewModels;
 
 namespace FileSystemApp.Models
 {
     public static class FileManager
     {
-        public static Folder BuildTree(FileSystemContext db, string path)
+        public static Folder BuildTree(FileSystemContext db, Guid id)
         {
             List<FileSystemItem> items = new List<FileSystemItem>();
             Folder folder;
-            if (path == "Root")
+            if (id == Guid.Empty)
             {
                 IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().ToList().Where(d => d.IsReady);
                 NumberOfFiles numberOfFiles = new NumberOfFiles();
@@ -20,6 +21,8 @@ namespace FileSystemApp.Models
                 {
                     FileSystemItem fileSystemItem = new FileSystemItem
                     {
+                        Id = Guid.NewGuid(),
+                        FolderId = id,
                         Name = driver.RootDirectory.FullName,
                         Path = driver.RootDirectory.FullName,
                         FileSystemItemType = FileSystemItemType.Folder
@@ -32,51 +35,72 @@ namespace FileSystemApp.Models
                 }
                 folder = new Folder
                 {
+                    Id = Guid.NewGuid(),
+                    ParentId = id,
                     FileSystemItems = items,
-                    FullName = "MyComputer",
-                    NumberOfFiles = numberOfFiles,
-                    Path = "Root"
+                    FullName = "My Computer",
+                    NumberOfFiles = numberOfFiles
                 };
                 db.Folders.Add(folder);
                 db.SaveChanges();
                 return folder;
             }
-            DirectoryInfo directory = new DirectoryInfo(path);
-            var subDirectories = directory.GetDirectories();
-            if (subDirectories.Count() > 0)
+            FileSystemItem item = db.FileSystemItems.Find(id);
+            DirectoryInfo directory = new DirectoryInfo(item.Path);
+            try
             {
-                foreach (var dir in subDirectories)
+                var subDirectories = directory.GetDirectories();
+                if (subDirectories.Count() > 0)
                 {
-                    FileSystemItem subDir = new FileSystemItem
+                    foreach (var dir in subDirectories)
                     {
-                        Name = dir.Name,
-                        Path = dir.FullName,
-                        FileSystemItemType = FileSystemItemType.Folder
-                    };
-                    items.Add(subDir);
+                        FileSystemItem subDir = new FileSystemItem
+                        {
+                            Id = Guid.NewGuid(),
+                            FolderId = id,
+                            Name = dir.Name,
+                            Path = dir.FullName,
+                            FileSystemItemType = FileSystemItemType.Folder
+                        };
+                        items.Add(subDir);
+                    }
                 }
-            }
-            var files = directory.GetFiles();
-            if (files.Count() > 0)
-            {
-                foreach (var file in files)
+                var files = directory.GetFiles();
+                if (files.Count() > 0)
                 {
-                    FileSystemItem fsi = new FileSystemItem
+                    foreach (var file in files)
                     {
-                        Name = file.Name,
-                        Path = file.DirectoryName,
-                        FileSystemItemType = FileSystemItemType.File
-                    };
-                    items.Add(fsi);
+                        FileSystemItem fsi = new FileSystemItem
+                        {
+                            Id = Guid.NewGuid(),
+                            FolderId = id,
+                            Name = file.Name,
+                            Path = file.DirectoryName,
+                            FileSystemItemType = FileSystemItemType.File
+                        };
+                        items.Add(fsi);
+                    }
                 }
+                folder = new Folder
+                {
+                    Id = id,
+                    ParentId = item.FolderId,
+                    FileSystemItems = items,
+                    FullName = directory.FullName,
+                    NumberOfFiles = GetFilesNumber(directory, new NumberOfFiles())
+                };
             }
-            folder = new Folder
+            catch (UnauthorizedAccessException)
             {
-                FileSystemItems = items,
-                FullName = directory.FullName,
-                NumberOfFiles = GetFilesNumber(directory, new NumberOfFiles()),
-                Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0,directory.FullName.LastIndexOf(@"\"))
-            };
+                folder = new Folder
+                {
+                    Id = id,
+                    ParentId = item.FolderId,
+                    FileSystemItems = items,
+                    FullName = "Unauthorized",
+                    NumberOfFiles = new NumberOfFiles()
+                };
+            }
             db.Folders.Add(folder);
             db.SaveChanges();
             return folder;
@@ -106,6 +130,29 @@ namespace FileSystemApp.Models
                 }
             }
             return numberOfFiles;
+        }
+
+        public static FolderViewModel CreateFolderViewModel(Folder folder)
+        {
+            List<FileSystemItemViewModel> fileSystemItems = new List<FileSystemItemViewModel>();
+            foreach (var item in folder.FileSystemItems)
+            {
+                FileSystemItemViewModel file = new FileSystemItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    FileSystemItemType = item.FileSystemItemType
+                };
+                fileSystemItems.Add(file);
+            }
+            FolderViewModel folderViewModel = new FolderViewModel
+            {
+                ParentId = folder.ParentId,
+                FullName = folder.FullName,
+                NumberOfFiles = folder.NumberOfFiles,
+                FileSystemItems = fileSystemItems.OrderBy(i => i.FileSystemItemType).ThenBy(i => i.Name).ToList()
+            };
+            return folderViewModel;
         }
     }
 }

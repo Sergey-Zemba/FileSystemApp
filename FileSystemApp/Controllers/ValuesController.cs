@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.UI.WebControls;
 using FileSystemApp.Models;
+using FileSystemApp.Models.ViewModels;
 
 namespace FileSystemApp.Controllers
 {
@@ -20,50 +21,19 @@ namespace FileSystemApp.Controllers
         }
 
         // GET api/values/5
-        public IHttpActionResult Get(string id)
+        public IHttpActionResult Get(Guid id)
         {
-            string path = id.Replace("*", @"\").Replace("&", ".");
             Folder folder;
-            if (db.Folders.Find(path) != null)
+            if (db.Folders.Find(id) != null)
             {
-                folder = db.Folders.Find(path);
+                folder = db.Folders.Find(id);
             }
             else
             {
-                folder = FileManager.BuildTree(db, path);
-                //DirectoryInfo directory = new DirectoryInfo(path);
-                //List<FileSystemItem> items = new List<FileSystemItem>();
-                //IEnumerable<DirectoryInfo> directories = directory.GetDirectories().ToList();
-                //foreach (var dir in directories)
-                //{
-                //    FileSystemItem item = new FileSystemItem
-                //    {
-                //        Name = dir.Name,
-                //        Path = dir.FullName,
-                //        FileSystemItemType = FileSystemItemType.Folder
-                //    };
-                //    items.Add(item);
-                //}
-                //IEnumerable<FileInfo> files = directory.GetFiles().ToList();
-                //foreach (var file in files)
-                //{
-                //    FileSystemItem item = new FileSystemItem
-                //    {
-                //        Name = file.Name,
-                //        Path = file.FullName,
-                //        FileSystemItemType = FileSystemItemType.File
-                //    };
-                //    items.Add(item);
-                //}
-                //var folder = new Folder
-                //{
-                //    FullName = directory.FullName,
-                //    Path = path.Length == 3 ? "MyComputer" : directory.FullName.Substring(0, directory.FullName.LastIndexOf("\\")),
-                //    FileSystemItems = items,
-                //    NumberOfFiles = FileManager.GetFilesNumber(directory, new NumberOfFiles())
-                //};
+                folder = FileManager.BuildTree(db, id);
             }
-            return Json(folder);
+            FolderViewModel folderViewModel = FileManager.CreateFolderViewModel(folder);
+            return Json(folderViewModel);
         }
 
         // POST api/values
