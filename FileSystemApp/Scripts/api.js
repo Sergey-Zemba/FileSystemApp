@@ -1,11 +1,20 @@
-﻿function GetContent(el) {
+﻿var animations = {
+    spinner: "/Content/ajax-loader.gif"
+}
+var table = $("#sizes");
+
+function GetContent(el) {
     var id = $(el).attr('data-item');
     $.ajax({
         url: "/api/values/" + id,
         type: "GET",
+        beforeSend: function() {
+            spinner.add();
+        },
         dataType: "json",
         success: function (data) {
             WriteResponse(data);
+            spinner.remove();
         },
         error: function () {
             alert("Error");
@@ -36,3 +45,21 @@ function WriteResponse(folder) {
         $("#sizes").html(table);
     }
 }
+
+var spinner = {
+    add: function () {
+        $('<img></img>')
+                .attr('src', animations.spinner)
+                .attr('class', 'spinner')
+                .hide()
+                .load(function () {
+                    $(this).fadeIn();
+                })
+                .appendTo(table);
+    },
+    remove: function () {
+        $('.spinner').fadeOut('slow', function () {
+            $(this).remove();
+        });
+    }
+};
