@@ -1,4 +1,8 @@
-﻿var animations = {
+﻿window.onload = function (id) {
+    GetContent(id);
+}
+
+var animations = {
     spinner: "/Content/ajax-loader.gif"
 }
 var table = $("#sizes");

@@ -4,16 +4,16 @@
 @model FileSystemApp.Models.ViewModels.FolderViewModel
 <div id="content">
     <div id="table">
-        <table>
+        <table class="table table-bordered table-striped">
             <thead>
-                <tr>
-                    <th>Less 10MB</th>
-                    <th>10Mb-100MB</th>
-                    <th>More 100MB</th>
-                </tr>
+            <tr>
+                <th>Less 10MB</th>
+                <th>10Mb-100MB</th>
+                <th>More 100MB</th>
+            </tr>
             </thead>
             <tbody id="sizes">
-                <tr>
+            <tr>
                     <td>@Model.NumberOfFiles.SmallSize</td>
                     <td>@Model.NumberOfFiles.MiddleSize</td>
                     <td>@Model.NumberOfFiles.LargeSize</td>
@@ -21,7 +21,7 @@
             </tbody>
         </table>
     </div>
-    <br /><br />
+    <br/><br/>
     <div id="fileSystem">
         <b>Current path: </b>@Model.FullName<br /><br />
         @foreach (var driver in Model.FileSystemItems)
