@@ -16,9 +16,7 @@ namespace FileSystemApp.Controllers
         {
             db.Folders.RemoveRange(db.Folders);
             db.FileSystemItems.RemoveRange(db.FileSystemItems);
-            Folder myComputer = FileManager.BuildTree(db, Guid.Empty);
-            FolderViewModel folderViewModel = FileManager.CreateFolderViewModel(myComputer);
-            return View(folderViewModel);
+            return View();
         }
     }
 }

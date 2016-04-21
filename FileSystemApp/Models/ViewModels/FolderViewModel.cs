@@ -7,6 +7,7 @@ namespace FileSystemApp.Models.ViewModels
 {
     public class FolderViewModel
     {
+        public Guid Id { get; set; }
         public Guid ParentId { get; set; }
         public string FullName { get; set; }
         public NumberOfFiles NumberOfFiles { get; set; }

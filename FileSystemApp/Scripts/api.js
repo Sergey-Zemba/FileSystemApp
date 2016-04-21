@@ -1,11 +1,13 @@
-﻿window.onload = function (id) {
-    GetContent(id);
-}
+﻿
+$(document).ready(function () {
+    var root = $("#root");
+    GetContent(root);
+});
 
 var animations = {
     spinner: "/Content/ajax-loader.gif"
 }
-var table = $("#sizes");
+var table = $("#table");
 
 function GetContent(el) {
     var id = $(el).attr('data-item');
