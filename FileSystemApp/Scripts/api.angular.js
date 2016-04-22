@@ -26,7 +26,8 @@ var element = $("#root");
 
 var fileSystemApp = angular.module("fileSystemApp", []);
 fileSystemApp.controller("fileSystemController", function ($scope, $http) {
-    $scope.goInside = function(elem) {
+    $scope.goInside = function ($event) {
+        var elem = $event.target;
         spinner.add();
         var id = $(elem).attr("data-item");
         $http.get('/api/values/' + id)
@@ -35,7 +36,12 @@ fileSystemApp.controller("fileSystemController", function ($scope, $http) {
             spinner.remove();
         });
     }
-    $scope.goInside(element);
+    spinner.add();
+    $http.get('/api/values/' + $(element).attr("data-item"))
+    .success(function (data) {
+        MakeResponse($scope, data);
+        spinner.remove();
+    });
 });
 
 function MakeResponse($scope, data) {
@@ -48,11 +54,22 @@ function MakeResponse($scope, data) {
         $scope.fullName = data.FullName;
         $scope.parentId = data.ParentId;
         $scope.fileSystemItems = {
-            items: []
+            directories: [],
+            files: []
         };
-        $.each(data.FileSystemItems, function(index, fsi) {
-            $scope.fileSystemItems.items.push({ name: fsi.Name, id: fsi.Id });
+        $.each(data.FileSystemItems, function (index, fsi) {
+            if (fsi.FileSystemItemType == 1) {
+                $scope.fileSystemItems.directories.push({ name: fsi.Name, id: fsi.Id });
+            } else {
+                $scope.fileSystemItems.files.push({ name: fsi.Name });
+            }
+            
         });
-
+        if (data.FullName == "My Computer") {
+                $("#parent").addClass("hidden");
+        } else {
+            $("#parent").removeClass("hidden");
+        }
     }
 }
+

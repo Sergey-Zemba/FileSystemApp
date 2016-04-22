@@ -1,33 +1,22 @@
-﻿<div ng-app="fileSystemApp">
-    <div id="content" ng-controller="fileSystemController">
-        <div id="table">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Less 10MB</th>
-                        <th>10Mb-100MB</th>
-                        <th>More 100MB</th>
-                    </tr>
-                </thead>
-                <tbody id="sizes">
-                    <tr>
-                        <td>{{smallSize}}</td>
-                        <td>{{middleSize}}</td>
-                        <td>{{largeSize}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <br /><br />
-        <input type="hidden" data-item="@Guid.Empty" id="root"/>
-        <span><b>Current path: </b>{{fullName}}</span><br /><br />
-        <div id="fileSystem" ng-repeat="item in fileSystemItems.items">
-            <a href="#" data-item="{{item.id}}" ng-click="goInside(this)">{{item.name}}</a><br />
-        </div>
+﻿<div id="content">
+    <div id="table">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Less 10MB</th>
+                    <th>10Mb-100MB</th>
+                    <th>More 100MB</th>
+                </tr>
+            </thead>
+            <tbody id="sizes"></tbody>
+        </table>
+    </div>
+    <br /><br />
+    <input type="hidden" data-item="@Guid.Empty" id="root" />
+    <div id="fileSystem">
     </div>
 </div>
 @section scripts
 {
-    <script type="text/javascript" src="~/Scripts/angular.min.js"></script>
-    <script type="text/javascript" src="~/Scripts/api2.js"></script>
+    <script type="text/javascript" src="~/Scripts/api.js"></script>
 }
