@@ -16,6 +16,15 @@ namespace FileSystemApp.Controllers
         {
             db.Folders.RemoveRange(db.Folders);
             db.FileSystemItems.RemoveRange(db.FileSystemItems);
+            db.SaveChanges();
+            return View();
+        }
+
+        public ActionResult Index2()
+        {
+            db.Folders.RemoveRange(db.Folders);
+            db.FileSystemItems.RemoveRange(db.FileSystemItems);
+            db.SaveChanges();
             return View();
         }
     }

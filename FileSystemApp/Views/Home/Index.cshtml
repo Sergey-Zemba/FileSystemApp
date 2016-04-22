@@ -1,7 +1,4 @@
-﻿@{
-    Layout = null;
-}
-<div id="content">
+﻿<div id="content">
     <div id="table">
         <table class="table table-bordered table-striped">
             <thead>
@@ -11,13 +8,12 @@
                     <th>More 100MB</th>
                 </tr>
             </thead>
-            <tbody id="sizes">
-            </tbody>
+            <tbody id="sizes"></tbody>
         </table>
     </div>
     <br /><br />
+    <input type="hidden" data-item="@Guid.Empty" id="root" />
     <div id="fileSystem">
-        <input type="hidden" data-item="@Guid.Empty" id="root" />
     </div>
 </div>
 @section scripts
